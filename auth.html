@@ -12,15 +12,36 @@
 <body>
 
 <header class="site-header">
-  <div class="wrap header-inner">
-    <a href="index.html" class="logo">Jublu<span>Tech</span></a>
-  </div>
+<div class="wrap header-inner">
+<a href="index.html" class="logo">Jublu<span>Tech</span></a>
+</div>
 </header>
 
 <main>
-  <section class="section auth-section">
-    <div class="wrap auth-wrap">
-      <div class="auth-card">
+<section class="section auth-section">
+
+  <div class="curtain" aria-hidden="true"></div>
+
+  <div class="wrap auth-wrap">
+    <div class="auth-intro" id="authIntro">
+
+      <div class="intro-character" id="introCharacter" aria-hidden="true">
+        <svg class="figure-solid" viewBox="0 0 60 120" width="100" height="200">
+          <g class="leg-l"><line x1="24" y1="74" x2="18" y2="112"/></g>
+          <g class="leg-r"><line x1="36" y1="74" x2="42" y2="112"/></g>
+          <rect class="body" x="18" y="32" width="24" height="42" rx="12"/>
+          <g class="arm-l"><line x1="20" y1="38" x2="6" y2="60"/></g>
+          <g class="arm-r-group">
+            <line class="arm-r" x1="40" y1="38" x2="54" y2="60"/>
+            <circle class="hand-r" cx="54" cy="60" r="5"/>
+          </g>
+          <circle class="head" cx="30" cy="16" r="12"/>
+        </svg>
+      </div>
+
+      <div class="pull-rope" aria-hidden="true"></div>
+
+      <div class="auth-card" id="authCard">
         <div class="auth-tabs" role="tablist">
           <button class="auth-tab is-active" data-tab="login" role="tab" aria-selected="true">Connexion</button>
           <button class="auth-tab" data-tab="signup" role="tab" aria-selected="false">Créer un compte</button>
@@ -58,19 +79,50 @@
           <p class="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
+
     </div>
-  </section>
+  </div>
+</section>
 </main>
 
 <footer class="site-footer">
-  <div class="wrap footer-inner">
-    <span class="logo">Jublu<span>Tech</span></span>
-    <p>© <span id="year"></span> JubluTech</p>
-  </div>
+<div class="wrap footer-inner">
+<span class="logo">Jublu<span>Tech</span></span>
+<p>© <span id="year"></span> JubluTech</p>
+</div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <script src="auth.js"></script>
+<script>
+(function () {
+  var intro = document.getElementById('authIntro');
+  var character = document.getElementById('introCharacter');
+  if (!intro || !character) return;
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) {
+    intro.classList.add('is-in');
+    character.classList.add('is-idle');
+    return;
+  }
+
+  requestAnimationFrame(function () {
+    intro.classList.add('is-in');
+    character.classList.add('is-walking');
+  });
+
+  setTimeout(function () {
+    character.classList.remove('is-walking');
+    character.classList.add('is-waving');
+  }, 1650);
+
+  setTimeout(function () {
+    character.classList.remove('is-waving');
+    character.classList.add('is-idle');
+  }, 3150);
+})();
+</script>
 </body>
 </html>

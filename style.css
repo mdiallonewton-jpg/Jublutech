@@ -468,15 +468,14 @@ a { color: inherit; }
   color: var(--text-on-light-dim);
 }
 
-.auth-section { padding: 96px 0; }
-.auth-wrap { display: flex; justify-content: center; }
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--paper);
-  border: 1px solid var(--line-light);
-  padding: 8px;
+.auth-section {
+  padding: 110px 0;
+  position: relative;
+  overflow: hidden;
+  background: var(--paper-dim);
 }
+.auth-wrap { display: flex; justify-content: center; }
+
 .auth-tabs {
   display: flex;
   gap: 4px;
@@ -499,6 +498,151 @@ a { color: inherit; }
   color: var(--gold);
 }
 .auth-form { padding: 8px 20px 20px; border: none; }
+
+/* ===========================================================
+   Auth — intro cinématique (personnage qui tire la carte)
+   =========================================================== */
+
+/* Rideau d'ouverture, façon générique de film */
+.curtain {
+  position: absolute;
+  inset: 0;
+  background: var(--ink-deep);
+  z-index: 10;
+  animation: curtain-fade 0.9s ease forwards;
+  pointer-events: none;
+}
+@keyframes curtain-fade {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+/* Groupe qui glisse ensemble : personnage + corde + carte */
+.auth-intro {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  transform: translateX(-160%);
+  opacity: 0;
+}
+.auth-intro.is-in {
+  animation: intro-slide-in 1.6s cubic-bezier(.22, 1.1, .36, 1) forwards;
+}
+@keyframes intro-slide-in {
+  0%   { transform: translateX(-160%); opacity: 0; }
+  8%   { opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* Personnage */
+.intro-character { flex-shrink: 0; margin-bottom: 6px; }
+.figure-solid .head,
+.figure-solid .body {
+  fill: var(--ink-deep);
+}
+.figure-solid .leg-l line,
+.figure-solid .leg-r line,
+.figure-solid .arm-l line,
+.figure-solid .arm-r {
+  stroke: var(--gold);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+.figure-solid .hand-r { fill: var(--gold); }
+
+/* Origines de rotation (approx, ajustables) */
+.figure-solid .leg-l,
+.figure-solid .leg-r,
+.figure-solid .arm-l {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+.figure-solid .arm-r-group {
+  transform-box: fill-box;
+  transform-origin: 0% 15%;
+}
+
+/* Marche : pendant le trajet uniquement */
+.intro-character.is-walking .leg-l,
+.intro-character.is-walking .leg-r,
+.intro-character.is-walking .arm-l {
+  animation: walk-swing 0.3s ease-in-out infinite alternate;
+}
+.intro-character.is-walking .leg-r,
+.intro-character.is-walking .arm-l {
+  animation-delay: 0.15s;
+}
+@keyframes walk-swing {
+  from { transform: rotate(-16deg); }
+  to   { transform: rotate(16deg); }
+}
+
+/* Signe de la main : à l'arrivée */
+.intro-character.is-waving .arm-r-group {
+  animation: wave-hand 0.5s ease-in-out 3;
+}
+@keyframes wave-hand {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(-75deg); }
+  100% { transform: rotate(-55deg); }
+}
+
+/* Idle : petite respiration après le signe */
+.intro-character.is-idle {
+  animation: idle-breathe 3.2s ease-in-out infinite;
+}
+@keyframes idle-breathe {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+/* Corde qui relie la main à la carte */
+.pull-rope {
+  width: 30px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+  margin: 0 -2px 68px -2px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Carte */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--paper);
+  border: 1px solid var(--line-light);
+  padding: 8px;
+  box-shadow: 0 24px 48px -24px rgba(16, 14, 39, 0.25);
+}
+
+@media (max-width: 860px) {
+  .intro-character,
+  .pull-rope {
+    display: none;
+  }
+  .auth-intro {
+    transform: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .auth-wrap { justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curtain,
+  .auth-intro,
+  .intro-character.is-walking .leg-l,
+  .intro-character.is-walking .leg-r,
+  .intro-character.is-walking .arm-l,
+  .intro-character.is-waving .arm-r-group,
+  .intro-character.is-idle {
+    animation: none !important;
+  }
+  .auth-intro { transform: none !important; opacity: 1 !important; }
+}
 
 /* ===========================================================
    Admin

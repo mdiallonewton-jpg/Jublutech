@@ -26,14 +26,20 @@ async function init() {
     return;
   }
 
-  const { data: profile } = await supabaseClient
+  const { data: profile, error: profileError } = await supabaseClient
     .from('profiles')
     .select('nom, is_admin')
     .eq('id', session.user.id)
     .single();
 
+  if (profileError) {
+    console.error('Erreur de récupération du profil :', profileError.message);
+    showGate();
+    return;
+  }
+
   authArea.innerHTML = `
-    <span class="auth-greeting">Bonjour, ${profile?.nom || session.user.email}</span>
+    <span class="auth-greeting">Bonjour, ${escapeHtml(profile?.nom || session.user.email)}</span>
     <button id="logout-btn" class="btn btn-ghost header-cta">Déconnexion</button>
   `;
   document.getElementById('logout-btn').addEventListener('click', async () => {
@@ -47,13 +53,16 @@ async function init() {
   }
 
   content.hidden = false;
+  gate.hidden = true;
   loadDemandes();
 }
 
 function showGate() {
   gate.hidden = false;
   content.hidden = true;
-  authArea.innerHTML = `<a href="auth.html" class="btn btn-ghost header-cta">Connexion</a>`;
+  if (!authArea.innerHTML.includes('logout-btn')) {
+    authArea.innerHTML = `<a href="auth.html" class="btn btn-ghost header-cta">Connexion</a>`;
+  }
 }
 
 async function loadDemandes() {
@@ -63,7 +72,7 @@ async function loadDemandes() {
     .order('created_at', { ascending: false });
 
   if (error) {
-    tbody.innerHTML = `<tr><td colspan="6">Erreur de chargement : ${error.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6">Erreur de chargement : ${escapeHtml(error.message)}</td></tr>`;
     return;
   }
 
@@ -72,18 +81,28 @@ async function loadDemandes() {
     return;
   }
 
+  emptyState.hidden = true;
   tbody.innerHTML = demandes.map(rowHtml).join('');
 
   tbody.querySelectorAll('select.status-select').forEach(select => {
     select.addEventListener('change', async () => {
       const id = select.dataset.id;
+      const previousValue = select.dataset.current || select.value;
+
       const { error } = await supabaseClient
         .from('demandes')
         .update({ status: select.value })
         .eq('id', id);
 
-      if (error) alert("Impossible de mettre à jour le statut : " + error.message);
+      if (error) {
+        alert("Impossible de mettre à jour le statut : " + error.message);
+        select.value = previousValue;
+        return;
+      }
+
+      select.dataset.current = select.value;
     });
+    select.dataset.current = select.value;
   });
 }
 

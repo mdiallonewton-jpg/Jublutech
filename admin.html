@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JubluTech — Dashboard admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="index.html" class="logo">JubluTech</a>
+    <div id="auth-area" class="header-actions"></div>
+  </header>
+
+  <main>
+    <section id="admin-gate" hidden>
+      <h1>Accès réservé</h1>
+      <p>Cette page est réservée aux administrateurs. Connecte-toi avec un compte admin.</p>
+    </section>
+
+    <section id="admin-content" hidden>
+      <h1>Dashboard — Demandes</h1>
+
+      <table id="demandes-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Structure</th>
+            <th>Besoin</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="demandes-body"></tbody>
+      </table>
+
+      <p id="empty-state" hidden>Aucune demande pour le moment.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="year"></span> JubluTech</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
