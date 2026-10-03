@@ -95,7 +95,7 @@ async function loadDemandes() {
         .eq('id', id);
 
       if (error) {
-        alert("Impossible de mettre à jour le statut : " + error.message);
+        console.error("Impossible de mettre à jour le statut : " + error.message);
         select.value = previousValue;
         return;
       }
